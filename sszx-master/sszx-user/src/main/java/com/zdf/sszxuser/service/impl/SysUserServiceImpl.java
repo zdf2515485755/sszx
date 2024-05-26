@@ -12,11 +12,17 @@ import com.zdf.internalcommon.entity.SysUser;
 import com.zdf.internalcommon.request.LogInRequestDto;
 import com.zdf.internalcommon.response.VerificationCodeResponseDto;
 import com.zdf.internalcommon.result.ResponseResult;
+import com.zdf.sszxuser.config.MinioConfig;
 import com.zdf.sszxuser.mapper.SysUserMapper;
 import com.zdf.sszxuser.service.SysUserService;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -37,6 +43,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
     private RedisTemplate<String, String> redisTemplate;
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private MinioClient minioClient;
+    @Resource
+    private MinioConfig minioConfig;
 
     @Override
     public ResponseResult<VerificationCodeResponseDto> getVerificationCode() {
@@ -79,8 +89,28 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         redisTemplate.opsForValue().set(tokenKey, token, RedisConstant.TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
         return ResponseResult.success(token);
     }
+
+    @Override
+    public ResponseResult<String> fileUpload(MultipartFile file) {
+        try {
+            boolean found =
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(minioConfig.getBucketName()).build());
+            if (!found) {
+                // Make a new bucket called 'asiatrip'.
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(minioConfig.getBucketName()).build());
+            } else {
+                log.info("Bucket 'asiatrip' already exists.");
+            }
+
+            String filename = file.getOriginalFilename();
+            minioClient.putObject(
+                    PutObjectArgs.builder().bucket(minioConfig.getBucketName()).object(filename).stream(
+                                    file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build());
+            return ResponseResult.success(filename);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
 }
-
-
-
-
