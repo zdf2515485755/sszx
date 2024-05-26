@@ -5,6 +5,7 @@ import com.zdf.internalcommon.entity.SysUser;
 import com.zdf.internalcommon.request.LogInRequestDto;
 import com.zdf.internalcommon.response.VerificationCodeResponseDto;
 import com.zdf.internalcommon.result.ResponseResult;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
 * @author mrzhang
@@ -14,4 +15,5 @@ import com.zdf.internalcommon.result.ResponseResult;
 public interface SysUserService extends IService<SysUser> {
     ResponseResult<VerificationCodeResponseDto> getVerificationCode();
     ResponseResult<String> login(LogInRequestDto logInRequestDto);
+    ResponseResult<String> fileUpload(MultipartFile file);
 }

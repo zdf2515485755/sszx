@@ -6,12 +6,13 @@ import com.zdf.internalcommon.result.ResponseResult;
 import com.zdf.sszxuser.annotation.PassTokenCheck;
 import com.zdf.sszxuser.service.impl.SysUserServiceImpl;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.security.InvalidKeyException;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *@Description api for operating Users
@@ -34,5 +35,10 @@ public class LogInController {
     @GetMapping("/login")
     public ResponseResult<String> login(@Validated @RequestBody LogInRequestDto logInRequestDto){
         return sysUserService.login(logInRequestDto);
+    }
+
+    @PostMapping("/fileUpload")
+    public ResponseResult<String> fileUpload(MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        return sysUserService.fileUpload(file);
     }
 }
