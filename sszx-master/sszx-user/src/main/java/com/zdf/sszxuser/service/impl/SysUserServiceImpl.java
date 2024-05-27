@@ -4,6 +4,7 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -85,8 +86,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         HashMap<String, Object> playLoad = new HashMap<>(1);
         playLoad.put(JwtConstant.JWT_TOKEN_NAME, logInRequestDto.getUsername());
         String token = JWTUtil.createToken(playLoad, JwtConstant.SIGN.getBytes());
-        String tokenKey = RedisConstant.TOKEN_KEY_PREFIX + logInRequestDto.getUsername();
-        redisTemplate.opsForValue().set(tokenKey, token, RedisConstant.TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+        String tokenKey = RedisConstant.TOKEN_KEY_PREFIX + token;
+        redisTemplate.opsForValue().set(tokenKey, JSONUtil.toJsonStr(sysUser), RedisConstant.TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
         return ResponseResult.success(token);
     }
 

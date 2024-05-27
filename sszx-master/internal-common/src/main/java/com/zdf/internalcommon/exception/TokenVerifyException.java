@@ -1,4 +1,4 @@
-package com.zdf.sszxuser.exception;
+package com.zdf.internalcommon.exception;
 
 import lombok.NoArgsConstructor;
 

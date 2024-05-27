@@ -1,17 +1,17 @@
 package com.zdf.sszxuser.controller;
 
+import com.zdf.internalcommon.annotation.PassTokenCheck;
 import com.zdf.internalcommon.request.LogInRequestDto;
 import com.zdf.internalcommon.response.VerificationCodeResponseDto;
 import com.zdf.internalcommon.result.ResponseResult;
-import com.zdf.sszxuser.annotation.PassTokenCheck;
 import com.zdf.sszxuser.service.impl.SysUserServiceImpl;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.security.InvalidKeyException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 /**
