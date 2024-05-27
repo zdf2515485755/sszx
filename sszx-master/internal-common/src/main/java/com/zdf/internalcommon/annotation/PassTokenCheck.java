@@ -1,4 +1,4 @@
-package com.zdf.sszxuser.annotation;
+package com.zdf.internalcommon.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

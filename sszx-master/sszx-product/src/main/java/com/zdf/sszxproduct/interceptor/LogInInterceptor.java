@@ -1,13 +1,11 @@
-package com.zdf.sszxuser.interceptor;
+package com.zdf.sszxproduct.interceptor;
 
-import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.zdf.internalcommon.annotation.PassTokenCheck;
 import com.zdf.internalcommon.constant.JwtConstant;
 import com.zdf.internalcommon.constant.RedisConstant;
 import com.zdf.internalcommon.constant.RequestConstant;
 import com.zdf.internalcommon.constant.StatusCode;
-import com.zdf.internalcommon.entity.SysUser;
 import com.zdf.internalcommon.exception.TokenVerifyException;
 import com.zdf.internalcommon.util.ThreadLocalUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +30,7 @@ public class LogInInterceptor implements HandlerInterceptor {
     private RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull  HttpServletResponse response, @NotNull Object handler) throws Exception {
+    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)){
             return Boolean.TRUE;
         }
@@ -62,8 +60,7 @@ public class LogInInterceptor implements HandlerInterceptor {
         if (!verifyResult){
             throw new TokenVerifyException(StatusCode.TOKEN_IS_ERROR.getMessage());
         }
-        SysUser sysUser = JSONUtil.toBean(redisToken, SysUser.class);
-        ThreadLocalUtil.set(sysUser);
+        ThreadLocalUtil.set(redisToken);
         //token续期
         redisTemplate.opsForValue().set(tokenKey, redisToken, RedisConstant.TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
         return Boolean.TRUE;
